@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, ScrollView, Linking, TouchableOpacity } from "react-native";
-import { Card, Title, Paragraph, Text, Button } from "react-native-paper";
+import { View, StyleSheet, ScrollView, Linking } from "react-native";
+import { Card, Title, Paragraph, Text, Button, Divider } from "react-native-paper";
 import { getAllBooks } from "../services/api";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { RootStackParamList } from "../types";
-import { MaterialIcons } from "@expo/vector-icons";
 
 interface Book {
   _id: string;
@@ -13,14 +12,13 @@ interface Book {
   author: string;
   description: string;
   genre: string;
-  link: string; // Add a link field for the book
+  link: string;
 }
 
 const HomeScreen = () => {
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const [ratings, setRatings] = useState<{ [key: string]: number }>({}); // Track ratings for each book
 
   const fetchBooks = async () => {
     try {
@@ -48,10 +46,6 @@ const HomeScreen = () => {
       .catch((err) => console.error("An error occurred:", err));
   };
 
-  const setRating = (bookId: string, rating: number) => {
-    setRatings((prevRatings) => ({ ...prevRatings, [bookId]: rating }));
-  };
-
   useEffect(() => {
     fetchBooks();
   }, []);
@@ -67,10 +61,10 @@ const HomeScreen = () => {
         icon="pencil"
         onPress={() => navigation.navigate("Books")}
         style={styles.manageButton}
-        contentStyle={{ flexDirection: "row-reverse" }} // Optional: Align icon properly
+        contentStyle={{ flexDirection: "row-reverse" }}
         compact
       >
-
+       
       </Button>
 
       <ScrollView contentContainerStyle={styles.booksContainer}>
@@ -80,41 +74,39 @@ const HomeScreen = () => {
           books.map((book) => (
             <Card key={book._id} style={styles.card}>
               <Card.Content>
+                {/* Judul */}
                 <Title style={styles.title}>{book.title}</Title>
-                <Paragraph style={styles.author}>By: {book.author}</Paragraph>
-                <Paragraph style={styles.genre}>Genre: {book.genre}</Paragraph>
+
+                {/* Divider */}
+                <Divider style={styles.divider} />
+
+                {/* Author and Genre */}
+                <View style={styles.metaContainer}>
+                  <Text style={styles.author}>Author: {book.author}</Text>
+                  <Text style={styles.genre}>Genre: {book.genre}</Text>
+                </View>
+
+                {/* Divider */}
+                <Divider style={styles.divider} />
+
+                {/* Deskripsi */}
                 <Paragraph numberOfLines={3} style={styles.description}>
                   {book.description}
                 </Paragraph>
-                <View style={styles.actionRow}>
-                  <Button
-                    mode="contained"
-                    onPress={() => openBookLink(book.link)}
-                    style={styles.linkButton}
-                    labelStyle={styles.linkButtonLabel}
-                    compact
-                  >
-                    Visit Link
-                  </Button>
-                  <View style={styles.ratingContainer}>
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <TouchableOpacity
-                        key={star}
-                        onPress={() => setRating(book._id, star)}
-                      >
-                        <MaterialIcons
-                          name={
-                            ratings[book._id] >= star
-                              ? "star"
-                              : "star-border"
-                          }
-                          size={24}
-                          color="#FFD700" // Gold color for stars
-                        />
-                      </TouchableOpacity>
-                    ))}
-                  </View>
-                </View>
+
+                {/* Divider */}
+                <Divider style={styles.divider} />
+
+                {/* Tombol Visit Link */}
+                <Button
+                  mode="contained"
+                  onPress={() => openBookLink(book.link)}
+                  style={styles.linkButton}
+                  labelStyle={styles.linkButtonLabel}
+                  compact
+                >
+                  Visit Link
+                </Button>
               </Card.Content>
             </Card>
           ))
@@ -127,7 +119,7 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f0f4f8",
+    backgroundColor: "#1b2838", // Latar belakang abu gelap
     paddingHorizontal: 16,
     paddingTop: 16,
   },
@@ -139,7 +131,7 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   manageButton: {
-    backgroundColor: "#82c0cc",
+    backgroundColor: "#001f3f", // Warna navy
     paddingVertical: 8,
     paddingHorizontal: 20,
     borderRadius: 20,
@@ -149,7 +141,7 @@ const styles = StyleSheet.create({
   },
   card: {
     flexBasis: "48%",
-    backgroundColor: "#ffffff",
+    backgroundColor: "#2c3e50", // Latar belakang kartu navy terang
     borderRadius: 10,
     padding: 16,
     marginBottom: 16,
@@ -158,58 +150,59 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
-    alignItems: "flex-start",
-    minHeight: 150,
+    alignItems: "center",
+    minHeight: 200,
+    borderColor: "#34495e",
+    borderWidth: 1,
   },
   title: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#1e2d2f",
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#ffffff", // Teks putih untuk judul
+    marginBottom: 6,
+    textAlign: "center",
+  },
+  divider: {
+    marginVertical: 8,
+    backgroundColor: "#34495e", // Warna navy terang untuk pembatas
+    height: 1,
+  },
+  metaContainer: {
+    alignItems: "center",
     marginBottom: 6,
   },
   author: {
     fontSize: 12,
     fontStyle: "italic",
-    color: "#6c7a89",
-    marginBottom: 4,
+    color: "#bdc3c7", // Abu pastel untuk penulis
   },
   genre: {
     fontSize: 12,
     fontWeight: "500",
-    color: "#4db6ac",
-    marginBottom: 10,
+    color: "#1abc9c", // Warna hijau pastel untuk genre
   },
   description: {
     fontSize: 12,
     lineHeight: 18,
-    color: "#3c4858",
-    marginBottom: 8,
-  },
-  actionRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: 10,
+    color: "#ecf0f1", // Abu terang untuk deskripsi
+    textAlign: "center",
   },
   linkButton: {
-    backgroundColor: "#1e88e5",
+    backgroundColor: "#0074D9", // Biru navy terang
     borderRadius: 25,
     paddingHorizontal: 12,
     paddingVertical: 6,
+    marginTop: 8,
   },
   linkButtonLabel: {
     fontSize: 14,
     fontWeight: "bold",
-    color: "#fff",
-  },
-  ratingContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    color: "#ffffff", // Teks putih untuk tombol
   },
   noBooks: {
     fontSize: 16,
     fontWeight: "500",
-    color: "#8a8d91",
+    color: "#bdc3c7", // Abu terang untuk teks kosong
     textAlign: "center",
     marginTop: 40,
   },

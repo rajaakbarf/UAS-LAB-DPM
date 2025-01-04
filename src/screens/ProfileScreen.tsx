@@ -49,7 +49,7 @@ const ProfileScreen = () => {
   };
 
   const openEditModal = () => {
-    setEditedProfile(user); // Populate the modal with the current user data
+    setEditedProfile(user);
     setEditModalVisible(true);
   };
 
@@ -77,7 +77,7 @@ const ProfileScreen = () => {
   if (!user) {
     return (
       <View style={styles.container}>
-        <Text>No user data available.</Text>
+        <Text style={styles.noUserText}>No user data available.</Text>
       </View>
     );
   }
@@ -86,14 +86,18 @@ const ProfileScreen = () => {
     <View style={styles.container}>
       {/* Profile Header */}
       <View style={styles.profileHeader}>
-        <Image
-          source={{
-            uri: user.profilePicture || "https://via.placeholder.com/150",
-          }}
-          style={styles.profileImage}
-        />
-        <Text style={styles.profileName}>{user.username}</Text>
-        <Text style={styles.profileEmail}>{user.email}</Text>
+        <View style={styles.profileImageContainer}>
+          <Image
+            source={{
+              uri: user.profilePicture || "https://via.placeholder.com/150",
+            }}
+            style={styles.profileImage}
+          />
+        </View>
+        <View style={styles.profileInfo}>
+          <Text style={styles.profileName}>{user.username}</Text>
+          <Text style={styles.profileEmail}>{user.email}</Text>
+        </View>
       </View>
 
       {/* Buttons */}
@@ -109,50 +113,55 @@ const ProfileScreen = () => {
       {/* Edit Profile Modal */}
       <Modal
         visible={editModalVisible}
-        animationType="slide"
+        animationType="fade"
+        transparent
         onRequestClose={() => setEditModalVisible(false)}
       >
-        <ScrollView style={styles.modalContainer}>
-          <Text style={styles.modalTitle}>Edit Profile</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Username"
-            value={editedProfile?.username}
-            onChangeText={(text) =>
-              setEditedProfile({ ...editedProfile!, username: text })
-            }
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            value={editedProfile?.email}
-            onChangeText={(text) =>
-              setEditedProfile({ ...editedProfile!, email: text })
-            }
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Profile Picture URL"
-            value={editedProfile?.profilePicture || ""}
-            onChangeText={(text) =>
-              setEditedProfile({ ...editedProfile!, profilePicture: text })
-            }
-          />
-          <View style={styles.modalButtons}>
-            <TouchableOpacity
-              style={styles.cancelButton}
-              onPress={() => setEditModalVisible(false)}
-            >
-              <Text style={styles.cancelButtonText}>Cancel</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.saveButton}
-              onPress={handleSaveProfile}
-            >
-              <Text style={styles.saveButtonText}>Save</Text>
-            </TouchableOpacity>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Edit Profile</Text>
+            <ScrollView style={styles.modalContent}>
+              <TextInput
+                style={styles.input}
+                placeholder="Username"
+                value={editedProfile?.username}
+                onChangeText={(text) =>
+                  setEditedProfile({ ...editedProfile!, username: text })
+                }
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                value={editedProfile?.email}
+                onChangeText={(text) =>
+                  setEditedProfile({ ...editedProfile!, email: text })
+                }
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Profile Picture URL"
+                value={editedProfile?.profilePicture || ""}
+                onChangeText={(text) =>
+                  setEditedProfile({ ...editedProfile!, profilePicture: text })
+                }
+              />
+            </ScrollView>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={() => setEditModalVisible(false)}
+              >
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.saveButton}
+                onPress={handleSaveProfile}
+              >
+                <Text style={styles.saveButtonText}>Save</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </ScrollView>
+        </View>
       </Modal>
     </View>
   );
@@ -161,46 +170,58 @@ const ProfileScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#1b2838", // Navy dark background
     padding: 20,
   },
   profileHeader: {
+    flexDirection: "row",
     alignItems: "center",
+    backgroundColor: "#2c3e50", // Navy card background
+    padding: 20,
+    borderRadius: 10,
     marginBottom: 20,
   },
+  profileImageContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    overflow: "hidden",
+    marginRight: 20,
+  },
   profileImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 10,
+    width: "100%",
+    height: "100%",
+  },
+  profileInfo: {
+    flex: 1,
   },
   profileName: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: "bold",
-    color: "#333",
+    color: "#ffffff",
   },
   profileEmail: {
-    fontSize: 16,
-    color: "#666",
+    fontSize: 14,
+    color: "#bdc3c7",
+    marginTop: 5,
   },
   actionButtons: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 20,
   },
   editButton: {
-    backgroundColor: "#007BFF",
-    padding: 10,
-    borderRadius: 8,
     flex: 1,
+    backgroundColor: "#0074D9",
+    padding: 15,
+    borderRadius: 8,
     alignItems: "center",
     marginRight: 10,
   },
   logoutButton: {
-    backgroundColor: "#FF5252",
-    padding: 10,
-    borderRadius: 8,
     flex: 1,
+    backgroundColor: "#e74c3c",
+    padding: 15,
+    borderRadius: 8,
     alignItems: "center",
     marginLeft: 10,
   },
@@ -208,50 +229,68 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
   },
-  modalContainer: {
+  modalOverlay: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContainer: {
+    width: "90%",
+    backgroundColor: "#2c3e50",
+    borderRadius: 10,
     padding: 20,
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "bold",
+    color: "#ffffff",
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  modalContent: {
     marginBottom: 20,
   },
   input: {
-    borderWidth: 1,
-    borderColor: "#ddd",
+    backgroundColor: "#ffffff",
     borderRadius: 8,
     padding: 10,
     marginBottom: 15,
-    backgroundColor: "#f9f9f9",
+    borderWidth: 1,
+    borderColor: "#ddd",
   },
   modalButtons: {
     flexDirection: "row",
     justifyContent: "space-between",
   },
   cancelButton: {
-    backgroundColor: "#ddd",
+    flex: 1,
+    backgroundColor: "#bdc3c7",
     padding: 10,
     borderRadius: 8,
-    flex: 1,
     alignItems: "center",
     marginRight: 10,
   },
   cancelButtonText: {
     color: "#333",
+    fontWeight: "bold",
   },
   saveButton: {
-    backgroundColor: "#007BFF",
+    flex: 1,
+    backgroundColor: "#0074D9",
     padding: 10,
     borderRadius: 8,
-    flex: 1,
     alignItems: "center",
     marginLeft: 10,
   },
   saveButtonText: {
-    color: "#fff",
+    color: "#ffffff",
     fontWeight: "bold",
+  },
+  noUserText: {
+    fontSize: 16,
+    color: "#bdc3c7",
+    textAlign: "center",
   },
 });
 

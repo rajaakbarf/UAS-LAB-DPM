@@ -194,64 +194,77 @@ const BookScreen = () => {
       visible={dialogVisible}
       animationType="slide"
       onRequestClose={() => setDialogVisible(false)}
+      transparent
     >
-      <SafeAreaView style={styles.modalContainer}>
-        <Surface style={styles.modalHeader}>
-          <Title style={styles.modalTitle}>
-            {selectedBook ? "Edit Book" : "Add New Book"}
-          </Title>
-          <IconButton
-            icon="close"
-            size={24}
-            onPress={() => setDialogVisible(false)}
-            style={styles.closeButton}
-          />
-        </Surface>
+      <View style={styles.modalOverlay}>
+        <View style={styles.modalContainer}>
+          <Surface style={styles.modalHeader}>
+            <Title style={styles.modalTitle}>
+              {selectedBook ? "Edit Book" : "Add New Book"}
+            </Title>
+            <IconButton
+              icon="close"
+              size={24}
+              onPress={() => setDialogVisible(false)}
+              style={styles.closeButton}
+            />
+          </Surface>
 
-        <ScrollView style={styles.formContent}>
-          <TextInput
-            label="Title *"
-            value={formData.title}
-            onChangeText={(text) => setFormData({ ...formData, title: text })}
-            style={styles.input}
-            mode="outlined"
-          />
-          <TextInput
-            label="Author *"
-            value={formData.author}
-            onChangeText={(text) => setFormData({ ...formData, author: text })}
-            style={styles.input}
-            mode="outlined"
-          />
-          <TextInput
-            label="Description *"
-            value={formData.description}
-            onChangeText={(text) =>
-              setFormData({ ...formData, description: text })
-            }
-            multiline
-            numberOfLines={4}
-            style={styles.input}
-            mode="outlined"
-          />
-          <TextInput
-            label="Genre *"
-            value={formData.genre}
-            onChangeText={(text) => setFormData({ ...formData, genre: text })}
-            style={styles.input}
-            mode="outlined"
-          />
-        </ScrollView>
+          <ScrollView style={styles.formContent}>
+            <TextInput
+              label="Title *"
+              value={formData.title}
+              onChangeText={(text) => setFormData({ ...formData, title: text })}
+              style={styles.input}
+              mode="outlined"
+            />
+            <TextInput
+              label="Author *"
+              value={formData.author}
+              onChangeText={(text) =>
+                setFormData({ ...formData, author: text })
+              }
+              style={styles.input}
+              mode="outlined"
+            />
+            <TextInput
+              label="Description *"
+              value={formData.description}
+              onChangeText={(text) =>
+                setFormData({ ...formData, description: text })
+              }
+              multiline
+              numberOfLines={4}
+              style={styles.input}
+              mode="outlined"
+            />
+            <TextInput
+              label="Genre *"
+              value={formData.genre}
+              onChangeText={(text) => setFormData({ ...formData, genre: text })}
+              style={styles.input}
+              mode="outlined"
+            />
+          </ScrollView>
 
-        <View style={styles.buttonContainer}>
-          <PaperButton mode="outlined" onPress={() => setDialogVisible(false)} style={styles.cancelButton}>
-            <Text style={styles.cancelButtonText}>Cancel</Text>
-          </PaperButton>
-          <PaperButton mode="contained" onPress={handleSubmit} style={styles.saveButton}>
-            <Text style={styles.saveButtonText}>Save</Text>
-          </PaperButton>
+          <View style={styles.buttonContainer}>
+            <PaperButton
+              mode="outlined"
+              onPress={() => setDialogVisible(false)}
+              style={styles.cancelButton}
+            >
+              <Text style={styles.cancelButtonText}>Cancel</Text>
+            </PaperButton>
+            <PaperButton
+              mode="contained"
+              onPress={handleSubmit}
+              style={styles.saveButton}
+            >
+              <Text style={styles.saveButtonText}>Save</Text>
+            </PaperButton>
+          </View>
         </View>
-      </SafeAreaView>
+      </View>
     </Modal>
   );
 
@@ -261,9 +274,15 @@ const BookScreen = () => {
 
   return (
     <View style={styles.container}>
-      <PaperButton mode="contained" onPress={handleAddBook} style={styles.addButton}>
-        <Text style={styles.addButtonText}>Add New Book</Text>
-      </PaperButton>
+      <View style={styles.addButtonContainer}>
+        <PaperButton
+          mode="contained"
+          onPress={handleAddBook}
+          style={styles.addButton}
+        >
+          <Text style={styles.addButtonText}>+</Text>
+        </PaperButton>
+      </View>
       <FlatList
         data={books}
         renderItem={renderBookItem}
@@ -279,47 +298,61 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "#1b2838", // Navy gelap untuk latar belakang
+  },
+  addButtonContainer: {
+    alignItems: "flex-end", // Memindahkan tombol ke kanan
+    marginBottom: 16,
+  },
+  addButton: {
+    backgroundColor: "#0074D9", // Biru terang untuk tombol tambah
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 50,
+  },
+  addButtonText: {
+    fontSize: 16,
+    color: "#ffffff",
+    fontWeight: "bold",
   },
   card: {
     marginBottom: 16,
     borderRadius: 12,
-    overflow: "hidden",
     elevation: 3,
-    backgroundColor: "#fff",
+    backgroundColor: "#2c3e50", // Navy terang untuk kartu
   },
   cardHeader: {
-    backgroundColor: "#e3f7f9",
+    backgroundColor: "#34495e",
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
+    borderBottomColor: "#2c3e50",
   },
   title: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#007B83",
+    color: "#ffffff", // Teks putih
     marginBottom: 4,
   },
   genre: {
     fontSize: 14,
-    color: "#007AFF",
+    color: "#1abc9c", // Hijau pastel
   },
   cardContent: {
     padding: 16,
   },
   description: {
     fontSize: 14,
-    color: "#555",
+    color: "#ecf0f1", // Abu terang
   },
   cardActions: {
     flexDirection: "row",
     justifyContent: "space-between",
     padding: 16,
     borderTopWidth: 1,
-    borderTopColor: "#eee",
+    borderTopColor: "#34495e",
   },
   editButton: {
-    backgroundColor: "#82cdd3",
+    backgroundColor: "#0074D9", // Biru terang
     borderRadius: 80,
     paddingHorizontal: 16,
     paddingVertical: 8,
@@ -329,32 +362,28 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   deleteButton: {
-    borderColor: "#ff5252",
+    borderColor: "#e74c3c", // Merah pastel
   },
-  addButton: {
-    alignSelf: "center",
-    backgroundColor: "#82cdd3",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 50,
-    marginBottom: 16,
-  },
-  addButtonText: {
-    fontSize: 16,
-    color: "#ffffff",
-    fontWeight: "bold",
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Transparansi gelap untuk latar belakang modal
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalContainer: {
-    flex: 1,
-    backgroundColor: "#e3f7f9", // Warna biru pastel untuk modal
+    backgroundColor: "#2c3e50", // Navy terang untuk modal
+    borderRadius: 20,
+    width: "90%",
+    paddingBottom: 16,
   },
   modalHeader: {
     padding: 16,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#82cdd3", // Header biru pastel
-    elevation: 3,
+    backgroundColor: "#34495e", // Header navy terang
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
   },
   modalTitle: {
     fontSize: 20,
@@ -367,7 +396,6 @@ const styles = StyleSheet.create({
     padding: 6,
   },
   formContent: {
-    flex: 1,
     padding: 16,
   },
   input: {
@@ -381,7 +409,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     padding: 16,
-    backgroundColor: "#ffffff",
+    backgroundColor: "#34495e",
   },
   cancelButton: {
     borderWidth: 1,
@@ -392,11 +420,11 @@ const styles = StyleSheet.create({
   },
   cancelButtonText: {
     fontSize: 16,
-    color: "#333",
+    color: "#ffffff",
     fontWeight: "bold",
   },
   saveButton: {
-    backgroundColor: "#82cdd3",
+    backgroundColor: "#0074D9",
     borderRadius: 20,
     paddingHorizontal: 20,
     paddingVertical: 10,

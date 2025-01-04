@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { Portal, Dialog, Paragraph, Button as PaperButton } from "react-native-paper";
+import { Portal, Dialog, Paragraph, Button as PaperButton, Card } from "react-native-paper";
+import { LinearGradient } from "expo-linear-gradient";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import { login } from "../services/api";
@@ -36,7 +37,7 @@ const LoginScreen = () => {
 				index: 0,
 				routes: [{ name: "MainTabs" }],
 			});
-		} catch (error : any) {
+		} catch (error: any) {
 			const apiError = error as ApiError;
 			const errorMessage = apiError.data?.message || "Something went wrong";
 			const errors = apiError.data?.errors;
@@ -44,9 +45,11 @@ const LoginScreen = () => {
 			const passwordError = errors?.password;
 			const usernameError = errors?.username;
 			setDialogMessage(
-				passwordError ? `${errorMessage}: ${passwordError}` :
-					usernameError ? `${errorMessage}: ${usernameError}` :
-						errorMessage
+				passwordError
+					? `${errorMessage}: ${passwordError}`
+					: usernameError
+					? `${errorMessage}: ${usernameError}`
+					: errorMessage
 			);
 			setVisible(true);
 		} finally {
@@ -55,64 +58,94 @@ const LoginScreen = () => {
 	};
 
 	return (
-		<View style={styles.container}>
-			<Text style={styles.title}>Login</Text>
-			<Input
-				placeholder="Username"
-				value={username}
-				onChangeText={setUsername}
-			/>
-			<Input
-				placeholder="Password"
-				value={password}
-				onChangeText={setPassword}
-				secureTextEntry
-			/>
-			<Button
-				title={loading ? "Logging in..." : "Login"}
-				onPress={handleLogin}
-				disabled={loading}
-			/>
-			<TouchableOpacity
-				style={styles.registerLink}
-				onPress={() => navigation.navigate("Register")}
-			>
-				<Text style={styles.registerText}>Don't have an account? Register</Text>
-			</TouchableOpacity>
-			<Portal>
-				<Dialog visible={visible} onDismiss={() => setVisible(false)}>
-					<Dialog.Title>Error</Dialog.Title>
-					<Dialog.Content>
-						<Paragraph>{dialogMessage}</Paragraph>
-					</Dialog.Content>
-					<Dialog.Actions>
-						<PaperButton onPress={() => setVisible(false)}>OK</PaperButton>
-					</Dialog.Actions>
-				</Dialog>
-			</Portal>
-		</View>
+		<LinearGradient
+			colors={["#6a11cb", "#2575fc"]}
+			style={styles.gradientBackground}
+		>
+			<View style={styles.container}>
+				<Card style={styles.card}>
+					<Card.Content>
+						<Text style={styles.title}>Welcome Back</Text>
+						<Text style={styles.subtitle}>Login to your account</Text>
+						<Input
+							placeholder="Username"
+							value={username}
+							onChangeText={setUsername}
+						/>
+						<Input
+							placeholder="Password"
+							value={password}
+							onChangeText={setPassword}
+							secureTextEntry
+						/>
+						<Button
+							title={loading ? "Logging in..." : "Login"}
+							onPress={handleLogin}
+							disabled={loading}
+						/>
+						<TouchableOpacity
+							style={styles.registerLink}
+							onPress={() => navigation.navigate("Register")}
+						>
+							<Text style={styles.registerText}>
+								Don't have an account? Register
+							</Text>
+						</TouchableOpacity>
+					</Card.Content>
+				</Card>
+				<Portal>
+					<Dialog visible={visible} onDismiss={() => setVisible(false)}>
+						<Dialog.Title>Error</Dialog.Title>
+						<Dialog.Content>
+							<Paragraph>{dialogMessage}</Paragraph>
+						</Dialog.Content>
+						<Dialog.Actions>
+							<PaperButton onPress={() => setVisible(false)}>OK</PaperButton>
+						</Dialog.Actions>
+					</Dialog>
+				</Portal>
+			</View>
+		</LinearGradient>
 	);
 };
 
 const styles = StyleSheet.create({
+	gradientBackground: {
+		flex: 1,
+	},
 	container: {
 		flex: 1,
 		justifyContent: "center",
 		padding: 16,
-		backgroundColor: "#fff",
+	},
+	card: {
+		padding: 20,
+		borderRadius: 12,
+		elevation: 6,
+		backgroundColor: "#ffffffee", // Transparan agar menyatu dengan gradasi
+		marginHorizontal: 16,
 	},
 	title: {
-		fontSize: 24,
+		fontSize: 26,
 		fontWeight: "bold",
-		marginBottom: 20,
 		textAlign: "center",
+		color: "#333",
+		marginBottom: 8,
+	},
+	subtitle: {
+		fontSize: 16,
+		color: "#666",
+		textAlign: "center",
+		marginBottom: 16,
 	},
 	registerLink: {
 		marginTop: 15,
 		alignItems: "center",
 	},
 	registerText: {
-		color: "#007AFF",
+		color: "#2575fc",
+		fontSize: 14,
+		fontWeight: "bold",
 	},
 });
 

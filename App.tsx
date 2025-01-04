@@ -82,7 +82,7 @@ export default function App() {
             name="Books"
             component={BookScreen}
             options={{
-              title: "CRUD Books",
+              title: "Movie Hal",
               headerShown: true,
             }}
           />
